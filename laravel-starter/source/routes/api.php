@@ -1,6 +1,7 @@
 <?php
 
 use App\Controllers\API\UserController;
+use App\Controllers\API\ReminderController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -9,5 +10,9 @@ use Illuminate\Support\Facades\Route;
  * Here are some example, user related endpoints we have established as an example
  */
 
+// User endpoints
 Route::get('/users/{id}', [UserController::class, 'read']);
 Route::post('/users', [UserController::class, 'create']);
+
+// Reminder endpoints
+Route::post('/reminders', [ReminderController::class, 'create']);
