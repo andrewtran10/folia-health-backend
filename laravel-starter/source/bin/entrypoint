@@ -1,0 +1,13 @@
+#!/bin/bash
+
+env=${APP_ENV:-local}
+role=${CONTAINER_ROLE:-app}
+
+if [ ! -f "vendor/autoload.php" ]; then
+    composer install --no-progress --no-scripts --no-plugins --no-interaction --ignore-platform-reqs
+fi
+
+npm install
+npm run build
+
+php-fpm -y /usr/local/etc/php-fpm.conf
