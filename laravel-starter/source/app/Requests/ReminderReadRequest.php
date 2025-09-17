@@ -11,7 +11,7 @@ class ReminderReadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -22,7 +22,6 @@ class ReminderReadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'userId' => 'required|exists:users,id',
             'start_date' => 'required_with:end_date|date',
             'end_date' => 'required_with:start_date|date',
             'search' => 'sometimes|string',

@@ -3,12 +3,17 @@
 namespace App\Controllers\API;
 
 use App\Controllers\Controller;
+
 use App\Models\Reminder;
 use App\Models\User;
+
 use App\Resources\ReminderResource;
+
 use App\Requests\ReminderReadRequest;
 use App\Requests\ReminderCreateRequest;
 use App\Requests\ReminderUpdateRequest;
+
+use App\Responses\NoContentResponse;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
@@ -26,9 +31,10 @@ class ReminderController extends Controller
     {
         // Validate request
         $validated = $request->validated();
+        $validated['user_id'] = auth()->id();
 
         // Fetch user's reminders
-        $user = User::findOrFail($validated['userId']);
+        $user = User::findOrFail($validated['user_id']);
 
         $query = $user->reminders();
 
@@ -54,6 +60,7 @@ class ReminderController extends Controller
     {
         // Validate request body
         $validated = $request->validated();
+        $validated['user_id'] = auth()->id();
 
         return new ReminderResource(Reminder::create($validated));
     }
@@ -68,10 +75,14 @@ class ReminderController extends Controller
         return new ReminderResource($reminder);
     }
 
-    public function delete(Reminder $reminder): JsonResponse
+    public function delete(Reminder $reminder): Responsable
     {
+        if (auth()->id() !== $reminder->user_id) {
+            abort(403, "Unauthorized");
+        }
+
         $reminder->delete();
 
-        return response()->json(null, 204);
+        return new NoContentResponse();
     }
 }

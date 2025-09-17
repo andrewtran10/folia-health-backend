@@ -24,16 +24,23 @@ class UserController extends Controller
      * Creates a new user & stores it in the database
      * 
      */
-    public function create(Request $request): Responsable
+    public function create(Request $request): JsonResponse
     {
         $name = $request->input('name');
         $email = $request->input('email');
         $password = $request->input('password');
 
-        return new UserResource(User::create([
+        $user = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
-        ]));
+        ]);
+
+        $token = $user->createToken('api-key')->plainTextToken;
+
+        return new JsonResponse([
+            'user' => new UserResource($user),
+            'token' => $token,
+        ], 201);
     }
 }

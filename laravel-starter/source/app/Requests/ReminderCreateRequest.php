@@ -11,7 +11,7 @@ class ReminderCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -22,7 +22,6 @@ class ReminderCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'rrule' => 'required|string',
             'description' => 'required|string',
             'start_at' => 'required|date',

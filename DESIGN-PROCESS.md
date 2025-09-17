@@ -240,8 +240,18 @@ Now that the MVP is working and routes are returning the expected responses, we 
 
 ### Validation
 
-I already included some validation, but Laravel has FormRequests. These are great to contain Request logic for each route. So I'll move these over. Also authentication logic can live here with authorize(). So I've included using them to 1) learn more about Laravel and 2) clean up the Controller logic.
+I already included some validation, but Laravel has FormRequests. These are great to contain Request logic for each route. I'll implement these. Also authentication logic can live here with authorize(). So I've included using them to 1) learn more about Laravel and 2) clean up the Controller logic 3) they match how I would approach implementing something like this in Go where I would create Request structs to map to the raw request from context to be handled in the HttpHandler level.
 
 ### Authentication and Authorization
 
-Laravel's starter kit includes sessions for frontend logging in. With a backend API, we should use tokens.
+Laravel includes sessions and built-in auth for a browser authentication for users to log in and be remembered. With a backend API, we should use tokens. Laravel has two options to do this: Sanctum and Passport. For this project we'll use Sanctum.
+
+`php artisan install:api`
+
+Hide protected routes inside Santcum authentication guard. Update Resources and FormRequests to no longer require user_id as a parameter/field. Attach user_id to request bodies after authentication/authorizationa and validation. Now all routes are scoped to the specific user.
+
+I think in the future, I'd probably implement this in a Laravel Service if logic became more complex so that Controller can stay lean and strictly handle the http data layer but for now this will suffice.
+
+### Dealing with Laravel responses
+
+Since Laravel determines what type of response to send back based on the Accept header in the request, lets create custom Responses to handle these niche cases.

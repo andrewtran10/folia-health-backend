@@ -22,11 +22,10 @@ class ReminderResource extends JsonResource
     {
         $data = [
             'id' => $this->id,
-            'user_id' => $this->user_id,
             'rrule' => $this->rrule,
+            'rrule_human' => $this->transformRRuleToHumanReadable(),
             'description' => $this->description,
             'start_at' => $this->start_at,
-            'rrule_human' => $this->transformRRuleToHumanReadable(),
         ];
 
         // If start_date and end_date are provided, include occurrences
