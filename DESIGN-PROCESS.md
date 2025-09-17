@@ -233,3 +233,15 @@ simshaun/recurr seems to be a library for handling RFC 4454 recurrence rules tha
 Unfortunately, the human readable function does not match the needs of the projcet. We can use rlanvin/php-recurr instead.
 
 With these components I can build out the MVP for this task.
+
+## Next steps
+
+Now that the MVP is working and routes are returning the expected responses, we can move on to additions that should be considered.
+
+### Validation
+
+I already included some validation, but Laravel has FormRequests. These are great to contain Request logic for each route. So I'll move these over. Also authentication logic can live here with authorize(). So I've included using them to 1) learn more about Laravel and 2) clean up the Controller logic.
+
+### Authentication and Authorization
+
+Laravel's starter kit includes sessions for frontend logging in. With a backend API, we should use tokens.

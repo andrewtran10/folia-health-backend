@@ -6,6 +6,9 @@ use App\Controllers\Controller;
 use App\Models\Reminder;
 use App\Models\User;
 use App\Resources\ReminderResource;
+use App\Requests\ReminderReadRequest;
+use App\Requests\ReminderCreateRequest;
+use App\Requests\ReminderUpdateRequest;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
@@ -19,15 +22,10 @@ class ReminderController extends Controller
      * Read an existing reminder from the database
      * 
      */
-    public function read(Request $request): Responsable
+    public function read(ReminderReadRequest $request): Responsable
     {
         // Validate request
-        $validated = $request->validate([
-            'userId' => 'required|exists:users,id',
-            'start_date' => 'required_with:end_date|date',
-            'end_date' => 'required_with:start_date|date',
-            'search' => 'sometimes|string',
-        ]);
+        $validated = $request->validated();
 
         // Fetch user's reminders
         $user = User::findOrFail($validated['userId']);
@@ -52,38 +50,18 @@ class ReminderController extends Controller
      * Creates a new reminder & stores it in the database
      * 
      */
-    public function create(Request $request): Responsable
+    public function create(ReminderCreateRequest $request): Responsable
     {
         // Validate request body
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'rrule' => 'required|string',
-            'description' => 'required|string',
-            'start_at' => 'required|date',
-        ]);
+        $validated = $request->validated();
 
-        $userId = $validated['user_id'];
-        $rrule = $validated['rrule'];
-        $description = $validated['description'];
-        $startAt = $validated['start_at'];
-
-        return new ReminderResource(Reminder::create([
-            'user_id' => $userId,
-            'rrule' => $rrule,
-            'description' => $description,
-            'start_at' => $startAt,
-        ]));
+        return new ReminderResource(Reminder::create($validated));
     }
 
-    public function update(Reminder $reminder, Request $request): Responsable
+    public function update(Reminder $reminder, ReminderUpdateRequest $request): Responsable
     {
         // Validate request body
-        $validated = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'rrule' => 'sometimes|string',
-            'description' => 'sometimes|string',
-            'start_at' => 'sometimes|date',
-        ]);
+        $validated = $request->validated();
 
         $reminder->update($validated);
 
