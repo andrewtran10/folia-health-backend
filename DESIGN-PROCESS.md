@@ -255,3 +255,7 @@ I think in the future, I'd probably implement this in a Laravel Service if logic
 ### Dealing with Laravel responses
 
 Since Laravel determines what type of response to send back based on the Accept header in the request, lets create custom Responses to handle these niche cases.
+
+### UUIDs
+
+User and Reminders are serial ids. We should move to UUIDs for their primary keys. Generated migration file. Learned sqlite doesn't support dropping constraints so cheated and updated the existing migration files to use uuid.
