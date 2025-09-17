@@ -11,4 +11,9 @@ class Reminder extends Model
 
     protected $fillable = ['user_id', 'rrule', 'description', 'start_at'];
 
+    // Define reminder -> user relationship
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

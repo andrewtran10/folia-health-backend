@@ -16,3 +16,6 @@ Route::post('/users', [UserController::class, 'create']);
 
 // Reminder endpoints
 Route::post('/reminders', [ReminderController::class, 'create']);
+Route::patch('/reminders/{reminder}', [ReminderController::class, 'update']);
+Route::delete('/reminders/{reminder}', [ReminderController::class, 'delete']);
+Route::get('/reminders', [ReminderController::class, 'read']);

@@ -43,4 +43,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Define user -> reminders relationship
+    public function reminders()
+    {
+        return $this->hasMany(Reminder::class);
+    }
 }

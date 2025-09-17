@@ -115,7 +115,7 @@ To address the minimum functional requirements:
 4. Allow for multiple kinds of recurrence rules ("every day", "every n days/weeks/months", "every second Monday")
     - Utilize RFC 5545
 
-## Database Schema
+### Database Schema
 
 We can create a database schema such that it addressed the above:
 
@@ -131,14 +131,105 @@ CREATE TABLE reminders (
 
 Since recurrence rules already define how they expire, we wouldn't need to store the end_date directly in our table.
 
-## Model
+### Model
 
 The model for this domain object follows easily. We can define a migration and run php artisan make:model Reminder
 
-## Resource
+### Resource
 
 How we want to return the recurrence rule is the challenging aspect. We'd have to define whether returning the recurrence rule as is (in RFC 5545 format), is sufficient for the requirements. For MVP, we can add a route GET /api/reminder/{reminderId} that simply returns the resource with the recurrence rule as is.
 
-## Controller
+### Controller
 
 Starting with the first three routes, these should follow fairly simply. Running make:model earlier should have created this for us.
+
+## Further Considerations
+
+For a robust API, we should consider things like validation, authentication,
+
+### Validation
+
+Requests should be validated. json bodies should be well formated and certain parameters need validation as well (making sure they are they correct type and if required then the request has them)
+
+### Authentication
+
+Making the assumption that only users should have access to their own data, in a frontend client where they authenticate themselves they ideally should be sending some sort of token to the backend that authorizes them access to their own data. This way, users can't request reminders coming owned by another user.
+
+## Database schema
+
+One thing of note while peeking around at the seeded Users table is that we are using serial ids. For now this is fine, but we should move to UUID. User's shouldn't be able to "guess" another user's id. Using UUID would address this issue. We can update the schema later.
+
+# Develop
+
+### Domain model
+
+Created migration following the schema above.
+
+### POST /api/reminders
+
+Went fairly smoothly. Decided to just accept any text for rrule. Can ensure validation afterwards. One thing we definitely will want to ensure if standardization of timezone.
+
+### PATCH /api/reminders/{reminder}
+
+Found some oddities with Laravel. Laravel sends different responses depending on what the request is accepting. The way Laravel returns errors after running the validators differs depending on what the request is accepting. If a PATCH /api/reminder/{reminder} request is sent with an invalid body, but the Accept header on the request is not explicitly `application/json` then it will default to sending text/html and redirect back to the default welcome blade template as a response.
+
+We could run with the assumption that all requests from the frontend will send requests to this backend service with that "Accept: application/json" header. But for a robust service we should be purposeful in how we are sending responses. Will save this for after MVP.
+
+### DELETE /api/reminders/{reminder}
+
+Delete route follows simply
+
+### GET /api/reminders
+
+Assumptions made:
+
+-   start_date and end_date are `REQUIRED` parameters
+-   user_id is a `REQUIRED` parameter
+
+We can include another parameter to address the searching
+
+-   description/search is an `OPTIONAL` parameter
+
+Want to get this route running for MVP. We can set user_id as a required parameter for now at least until we introduce authentication properly for our routes which will scope the routes to the specific user.
+
+We can fetch all recurrence rules a user has. Filter by rules where the reminder's start_at is <= request's end_date
+
+In both cases, we would use the req.start_date and req.end_date to filter out generated dates or limit the generation of dates to this range.
+
+This did make me think of optimizations. If we fetch all of a user's reminders where the start_at is before the req.end_date, then this could include reminders that are expired. If we begin the logic with calculating all of the potential dates and then filtering for req.start_date and req.end_date then we could be left with a large range of dates that are no where close to the request dates. The second option would be to filter during the fetch for a user's reminders and then generate the dates.
+
+However, since I don't know anything about scale and mainly just considering building the MVP, we can consider this optimization afterwards. In all honesty, this optimization may not even matter much. A single instance of this service can probably handle a user with a huge number of reminders. So for now we don't have to worry about this. But was an interesting thought.
+
+Another concern of mine though is there isn't much of a data contract between the frontend in the backend. Would we want to give the data as is (a fairly one-to-one representation of what is in the database), would we want a human readable format, ect. For now, lets do both.
+
+The response would look something like:
+
+```
+{
+    data: [
+        {
+            "id": {reminder_id},
+            "user_id": {user_id},
+            "rrule": {
+                "raw": "FREQ=DAILY;INTERVAL=1",
+                "human": "Every day"
+            }
+            "occurences": {array<datetime>}
+        },
+        {
+            "id": {reminder_id},
+            "user_id": {user_id},
+            "rrule": {
+                "raw": "FREQ=DAILY;BYHOUR=9;BYMINUTE=0",
+                "human": "Every day at 9:00 AM"
+            }
+            "occurences": {array<datetime>}
+        }, ...
+    ]
+}
+```
+
+simshaun/recurr seems to be a library for handling RFC 4454 recurrence rules that we can utilize here.
+Unfortunately, the human readable function does not match the needs of the projcet. We can use rlanvin/php-recurr instead.
+
+With these components I can build out the MVP for this task.
