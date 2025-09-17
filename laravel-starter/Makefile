@@ -8,6 +8,8 @@ build:
 up:
 	docker compose -f docker-compose.yml up -d
 
+run: build up
+
 stop:
 	docker compose stop
 
