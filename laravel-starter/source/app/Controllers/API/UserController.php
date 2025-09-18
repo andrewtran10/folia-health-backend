@@ -5,6 +5,8 @@ namespace App\Controllers\API;
 use App\Controllers\Controller;
 use App\Models\User;
 use App\Resources\UserResource;
+use App\Resources\UserCreateResource;
+
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,9 +40,8 @@ class UserController extends Controller
 
         $token = $user->createToken('api-key')->plainTextToken;
 
-        return new JsonResponse([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ], 201);
+        return (new UserCreateResource($user, $token))
+            ->response()
+            ->setStatusCode(JsonResponse::HTTP_CREATED);
     }
 }
