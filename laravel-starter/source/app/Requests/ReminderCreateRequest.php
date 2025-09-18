@@ -2,6 +2,7 @@
 
 namespace App\Requests;
 
+use App\Rules\ValidRRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReminderCreateRequest extends FormRequest
@@ -22,7 +23,7 @@ class ReminderCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rrule' => 'required|string',
+            'rrule' => ['required', 'string', new ValidRRule()],
             'description' => 'required|string',
             'start_at' => 'required|date',
         ];

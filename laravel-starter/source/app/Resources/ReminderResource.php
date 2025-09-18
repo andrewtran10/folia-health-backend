@@ -15,7 +15,8 @@ class ReminderResource extends JsonResource
     public function __construct($resource)
     {
         parent::__construct($resource);
-        $this->rruleObject = $this->createRRuleObject($this->resource->rrule, $this->resource->start_at);
+        $this->rruleObject = new RRule($this->resource->rrule);
+        // $this->rruleObject = $this->createRRuleObject($this->resource->rrule, $this->resource->start_at);
     }
 
     public function toArray(Request $request): array

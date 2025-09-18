@@ -265,3 +265,7 @@ User and Reminders are serial ids. We should move to UUIDs for their primary key
 Initially I thought we may have had to handle the datetime input. Luckily Laravel handles that in the background in the format YYYY-MM-DD HH:MM:SS.
 
 However, when checking against the database, I saw that the start_at query parameter was being stored as is. Need to cast the model's start_at field as datetime. With this, Laravel now knows to treat the start_at as a datetime.
+
+### RRule Validation
+
+Although we have validation rules set up, in POST /api/reminders the rrule string only validates if it is a string. We should have custom validation to ensure that it is in proper RFC 5545 format. Also this gives me an opportunity to learn about custom Validators.
