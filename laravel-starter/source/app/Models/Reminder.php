@@ -12,6 +12,13 @@ class Reminder extends Model
 
     protected $fillable = ['user_id', 'rrule', 'description', 'start_at'];
 
+    protected function casts(): array
+    {
+        return [
+            'start_at' => 'datetime',
+        ];
+    }
+
     // Define reminder -> user relationship
     public function user()
     {

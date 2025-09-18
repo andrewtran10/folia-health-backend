@@ -167,7 +167,7 @@ Created migration following the schema above.
 
 ### POST /api/reminders
 
-Went fairly smoothly. Decided to just accept any text for rrule. Can ensure validation afterwards. One thing we definitely will want to ensure if standardization of timezone.
+Went fairly smoothly. Decided to just accept any text for rrule. Can ensure validation afterwards. One thing we definitely will want to ensure if standardization of datetime objects in service.
 
 ### PATCH /api/reminders/{reminder}
 
@@ -259,3 +259,9 @@ Since Laravel determines what type of response to send back based on the Accept 
 ### UUIDs
 
 User and Reminders are serial ids. We should move to UUIDs for their primary keys. Generated migration file. Learned sqlite doesn't support dropping constraints so cheated and updated the existing migration files to use uuid.
+
+### Datetime handling
+
+Initially I thought we may have had to handle the datetime input. Luckily Laravel handles that in the background in the format YYYY-MM-DD HH:MM:SS.
+
+However, when checking against the database, I saw that the start_at query parameter was being stored as is. Need to cast the model's start_at field as datetime. With this, Laravel now knows to treat the start_at as a datetime.
