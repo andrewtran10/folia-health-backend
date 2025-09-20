@@ -17,10 +17,10 @@ type UserRepositoryInterface interface {
 }
 
 type UserRepository struct {
-	store *store.UserStore
+	store store.UserStoreInterface
 }
 
-func NewUserRepository(store *store.UserStore) (*UserRepository, error) {
+func NewUserRepository(store store.UserStoreInterface) (*UserRepository, error) {
 	return &UserRepository{store: store}, nil
 }
 

@@ -21,10 +21,10 @@ type ReminderRepositoryInterface interface {
 }
 
 type ReminderRepository struct {
-	reminderStore *store.ReminderStore
+	reminderStore store.ReminderStoreInterface
 }
 
-func NewReminderRepository(reminderStore *store.ReminderStore) (*ReminderRepository, error) {
+func NewReminderRepository(reminderStore store.ReminderStoreInterface) (*ReminderRepository, error) {
 	return &ReminderRepository{reminderStore: reminderStore}, nil
 }
 
