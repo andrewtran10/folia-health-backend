@@ -1,3 +1,7 @@
+# Purpose
+
+This document is for keeping track of my thought process and learning as I approached this challenge.
+
 ## Understanding the framework
 
 Laravel is a MVC fully contained ("complete ecosystem") web framework that utilizes php.
@@ -269,3 +273,15 @@ However, when checking against the database, I saw that the start_at query param
 ### RRule Validation
 
 Although we have validation rules set up, in POST /api/reminders the rrule string only validates if it is a string. We should have custom validation to ensure that it is in proper RFC 5545 format. Also this gives me an opportunity to learn about custom Validators.
+
+# Go Version
+
+## Summary
+
+This project was great. I think I was exposed to and now have a good understanding of Laravel. However I wanted to also build it out in Go.
+
+The design process for this was fairly similar to approaching the laravel version. The model, endpoints, request and responses were all the same.
+
+I went with a layered approach of Http Handler -> Repository -> Stores. The handlers handled the http request/response logic, repository for business logic, and stores for database handling.
+
+The logic was very similar to Laravel but since Laravel abstracts away a lot of the lower level handling, this needed to be implmented. For example, Laravel has its Eloquent ORM for dealing with models. In the go version I implement the database layer and querying logic, create custom errors, create custom validation on the requests, create the custom domain level objects for each layer, ect.
